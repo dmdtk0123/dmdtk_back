@@ -42,9 +42,9 @@ def matching_result():
         print("matching_result")
         print(type(matching_result))
 
-        #result = "--".join(matching_result)
+        # result = "--".join(matching_result)
 
-    return result
+    return "result"
 
 
 # 3. 색상 추천
