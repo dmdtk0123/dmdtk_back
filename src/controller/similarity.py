@@ -66,7 +66,7 @@ def get_image(idx, standard_descriptions, data_df):
 def get_description_similarity(result_df, description):
     # simi_s = pd.Series(result_df[description])
     # simi_s.sort_values(ascending=False, inplace=True)
-    
+
     # simi_s = pd.DataFrame(result_df[description])
     simi_s = result_df[["fileName", description]]
     simi_s.sort_values(by=description, ascending=False, inplace=True)
@@ -98,15 +98,17 @@ def get_similarity(pred_caption_list):  # [[3033.jpg, 'apple is...'], [  ], ... 
 
     result_df = data_df
 
-    result_a_arr = []
     priority = ["3", "4", "2", "5", "1"]
-    for index in range(5):
-        result_a = get_description_similarity(result_df, "similarity" + priority[index])
-        print("--------result_a-------")
-        print(result_a)
-        result_a_arr.append(result_a)
-        index_arr = result_a.index
+    result_dict = {}
 
+    for index in range(5):
+        result_s = get_description_similarity(result_df, "similarity" + priority[index])
+        print("--------result_a-------")
+        print(result_s)
+
+        result_dict[priority[index]] = result_s.loc[result_s.index, "fileName"]
+
+        index_arr = result_s.index
         print("index_arr")
         print(index_arr)
 
@@ -114,10 +116,10 @@ def get_similarity(pred_caption_list):  # [[3033.jpg, 'apple is...'], [  ], ... 
             result_df.drop(index=idx, errors="ignore", inplace=True)
         # 우선순위가 높은 3,4,2,5,1 순으로 3개의 이미지를 뽑은 뒤, df에서 그 행을 인덱스를 이용해서 제거한다.
 
-    print("!!!!!!!!!!!!!!!!!!!!!result_a_arr!!!!!!!!!!!!!!!!!")
-    print(result_a_arr[0])
-    print(result_a_arr[1])
-    return result_a_arr
+    print("!!!!!!!!!!!!!!!!!!!!!result_dict!!!!!!!!!!!!!!!!!")
+    print(result_dict)
+    print(type(result_dict))
+    return result_dict
     # result_a_arr는 length가 5인 리스트. 요소는 DataFrame이다.
     # result_a_arr[0]은 [index, similarity3] [0, 0.14] ...
     # result_a_arr[1]은 [index, similarity4] [0, 0.14] ...

@@ -11,7 +11,6 @@ from Demo.utils.language_utils import convert_vector_idx2word
 
 
 def get_caption_pred():
-
     parser = argparse.ArgumentParser(description="Demo")
     parser.add_argument("--model_dim", type=int, default=512)
     parser.add_argument("--N_enc", type=int, default=3)
