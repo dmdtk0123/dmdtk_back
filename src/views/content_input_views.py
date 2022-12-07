@@ -1,5 +1,6 @@
-import datetime as dt
 from flask import Blueprint, request, Response
+import json
+import base64
 
 from router.matching_text2image import match_text2image
 from router.recommended_colors import extract_colors
@@ -12,48 +13,56 @@ bp = Blueprint("main", __name__, url_prefix="/")
 @bp.route("/upload", methods=["POST"])
 def upload_file():
     # request의 body에 있는 사진을 Demo.data 폴더에 저장함.
-
     if request.method == "POST":
         # 파일(이미지) 리스트 받음
-        file_list = request.files.getlist("file[]")
+        file_list = request.files.getlist("files[]")
         print(len(file_list))
-        for file in file_list:
-            # 파일 확장자 저장
-            # extension = file.filename.split(".")[-1]
-            # today = dt.datetime.now()
-            # mytime = today.strftime("%Y%m%d-%H-%M-%S")
-            # filename = f"image-{mytime}"
-            # save_to = f"Demo/data/{filename}.{extension}"
 
+        for file in file_list:
             filename = f"image-{file.filename}"
             save_to = f"Demo/data/{filename}"
             file.save(save_to)
-    # return redirect(url_for('test_html', data=data))
-    return Response(status=201)
+
+        kobert_result = request.form.get("data")  # .get_json()
+        kobert_result = eval(kobert_result)
+        print(type(kobert_result))
+        print(kobert_result)
+        final_result = matching_result(kobert_result)
+    # return Response(status=201)
+    return Response(final_result)
 
 
-# 2. 받아 놓은 이미지와 받은 텍스트를 KoBert로 분류하여
-#   이미지와 텍스트를 매칭한 결과를 응답함.
+# 2. 받아 놓은 이미지와 KoBert로 분류한 텍스트를 매칭한 결과를 응답함.
 # json(kobert 문장 분류 결과) 요청 받아서 json(이미지-텍스트 매칭) 응답 보냄.
-@bp.route("/matching-result", methods=["POST"])
-def matching_result():
-    if request.method == "POST" and request.is_json == True:
-        # 텍스트 덩어리를 받아서 변수에 저장함.
-        # 매칭을 수행하는 함수에 텍스트 전달해서 매칭 결과 받아옴.
-        kobert_result = request.get_json()
-        # print(kobert_result_json)   #[{}, {}, ...]
-        # print(type(kobert_result_json))    #list
-        kobert_result_list = []
-        for element in kobert_result:
-            kobert_result_list.append([element["pred_data"], element["target"]])
+def matching_result(kobert_result):
+    print(kobert_result)
+    print(type(kobert_result))
+    # kobert_result   =[{}, {}, ...] , type=list
+    print(kobert_result.keys())
+    print(type(kobert_result.keys()))
 
-        print(kobert_result_list)  # 이중 리스트[["당도가 어쩌구저쩌구", 0], [] , [] ...]
+    kobert_result_dict = {1: [], 2: [], 3: []}
+    for key in kobert_result:
+        dict_key = kobert_result[key]["target"]
+        kobert_result_dict[dict_key].append(kobert_result[key]["pred_data"])
 
-        matching_result = match_text2image(kobert_result_list)
-        # print("matching_result")
-        # print(type(matching_result))
+    print("!!!!!!여기가!!!!!!!!!!!!!!!kobert-result-dict")
+    print(kobert_result_dict)
 
-    return "json(이미지-텍스트 매칭)"
+    # 매칭을 수행하는 함수에 텍스트 전달해서 매칭 결과 받아옴.
+    matching_result = match_text2image(kobert_result_dict)
+
+    for key in matching_result.keys():
+        with open("Demo/data/" + matching_result[key]["image"], "rb") as image_file:
+            image_binary = image_file.read()
+            encoded_string = base64.b64encode(image_binary)
+
+            matching_result[key]["image"] = encoded_string.decode()
+
+    return json.dumps(matching_result)
+
+
+# return "json(이미지-텍스트 매칭)"
 
 
 # 3. 색상 추천

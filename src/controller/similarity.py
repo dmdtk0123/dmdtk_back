@@ -2,17 +2,17 @@ from math import *
 import pandas as pd
 
 standard_descriptions_1 = [
-    "A person holding an apple in their hand." "A bunch of red apples",
-    "A pile of red apples",
-    "baskets of red apples",
+    "A person holding an apple in their hand",
+    "A bunch of red apples hanging from a tree.",
+    "Red apples hanging from a tree in a field.",
 ]
 
 standard_descriptions_2 = [
-    "A bunch of apples growing on a tree in a garden.",
-    "A bunch of red apples hanging from a tree in a field.",
+    "a tree in a garden.",
+    "hanging from a tree in a field.",
     "A group of green trees in a field.",
-    "A woman standing in a field with tree." "People with red apples on a tree.",
-    "A group of red apples in a field.",
+    "A woman standing in a field with tree.",
+    "People with red apples on a tree.",
 ]
 
 standard_descriptions_3 = [
@@ -64,10 +64,6 @@ def get_image(idx, standard_descriptions, data_df):
 
 # 이미지 유형별 유사도 가져오기
 def get_description_similarity(result_df, description):
-    # simi_s = pd.Series(result_df[description])
-    # simi_s.sort_values(ascending=False, inplace=True)
-
-    # simi_s = pd.DataFrame(result_df[description])
     simi_s = result_df[["fileName", description]]
     simi_s.sort_values(by=description, ascending=False, inplace=True)
 
@@ -83,7 +79,6 @@ def get_image_similarity(result_df, image_idx):
 
 
 def get_similarity(pred_caption_list):  # [[3033.jpg, 'apple is...'], [  ], ... ]
-    # data_df = pd.read_csv("image_caption_test_data.csv", low_memory=False)
     col_name = ["fileName", "imageCaption"]
     data_df = pd.DataFrame(pred_caption_list, columns=col_name)
 
@@ -103,10 +98,12 @@ def get_similarity(pred_caption_list):  # [[3033.jpg, 'apple is...'], [  ], ... 
 
     for index in range(5):
         result_s = get_description_similarity(result_df, "similarity" + priority[index])
-        print("--------result_a-------")
+        print("--------result_s-------")
         print(result_s)
 
-        result_dict[priority[index]] = result_s.loc[result_s.index, "fileName"]
+        # result_dict[priority[index]] = result_df.iloc[result_s.index, "fileName"]
+        # result_dict[priority[index]] = result_df["fileName"].values[0]
+        result_dict[int(priority[index])] = result_df.loc[result_s.index[0], "fileName"]
 
         index_arr = result_s.index
         print("index_arr")
@@ -118,8 +115,8 @@ def get_similarity(pred_caption_list):  # [[3033.jpg, 'apple is...'], [  ], ... 
 
     print("!!!!!!!!!!!!!!!!!!!!!result_dict!!!!!!!!!!!!!!!!!")
     print(result_dict)
+    print("이 아래는 result_dict 타입!!!!!!!!!!!")
     print(type(result_dict))
+    print("이 아래는 result_dict[1]!!!!!!!!!!!")
+    print(result_dict[1])
     return result_dict
-    # result_a_arr는 length가 5인 리스트. 요소는 DataFrame이다.
-    # result_a_arr[0]은 [index, similarity3] [0, 0.14] ...
-    # result_a_arr[1]은 [index, similarity4] [0, 0.14] ...
