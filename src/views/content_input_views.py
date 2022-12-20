@@ -72,9 +72,10 @@ def matching_result(kobert_result):
 
 
 # 3. 글꼴과 색상 추천
-@bp.route("/recommended-design/<adjective>", methods=["GET"])
-def recommended_design(adjective):
+@bp.route("/recommended-design", methods=["GET"])
+def recommended_design():
     # 형용사에 맞는 사분면에 따라 title font, body font 반환함.
+    adjective = request.args.get("adj")
     quadrant, title_font, body_font = extract_font(adjective)
 
     with open("./selected_image.json", "r") as file:
