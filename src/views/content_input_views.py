@@ -52,31 +52,44 @@ def matching_result(kobert_result):
     # 매칭을 수행하는 함수에 텍스트 전달해서 매칭 결과 받아옴.
     matching_result = match_text2image(kobert_result_dict)
 
-    for key in matching_result.keys():
-        with open("Demo/data/" + matching_result[key]["image"], "rb") as image_file:
+    # 추천된 5장의 이미지의 이름을 json 파일에 저장함(뒤에 글꼴과 색상 추천에서 쓰기 위함)
+    with open("./selected_image.json", "w") as outfile:
+        image = {}
+        image["image_name"] = []
+        for key in matching_result["image"]:
+            image["image_name"].append(matching_result["image"][key])
+        json.dump(image, outfile)
+
+    # 이미지 파일을 인코딩해서 matchig_result 딕셔너리에 더함
+    for key in matching_result["image"].keys():
+        with open("Demo/data/" + matching_result["image"][key], "rb") as image_file:
             image_binary = image_file.read()
             encoded_string = base64.b64encode(image_binary)
-
-            matching_result[key]["image"] = encoded_string.decode()
+            matching_result["image"][key] = encoded_string.decode()
 
     return json.dumps(matching_result)
+    # matching_result = {"image": {"close_shot": , "farm_landscape": }, "text": {"taste": , }}
 
 
-# return "json(이미지-텍스트 매칭)"
+# 3. 글꼴과 색상 추천
+@bp.route("/recommended-design/<adjective>", methods=["GET"])
+def recommended_design(adjective):
+    # 형용사에 맞는 사분면에 따라 title font, body font 반환함.
+    quadrant, title_font, body_font = extract_font(adjective)
 
+    with open("./selected_image.json", "r") as file:
+        data = json.load(file)
+        selected_image_list = data["image_name"]
 
-# 3. 색상 추천
-@bp.route("/recommended-colors", methods=["GET"])
-def recommended_colors():
-    result = extract_colors()
-    return "rgb color tuple(126, 51, 203)"
+    # (뽑힌 이미지 이름 list, 해당하는 사분면(quadrant))
+    color_result = extract_colors(selected_image_list, quadrant)
 
-
-# 4. 글꼴 추천
-@bp.route("/recommended-font/<adjective>", methods=["GET"])
-def recommended_font(adjective):
-    result = extract_font()
-    return "1234분면 중 어디인지 OR (title font, body font)"
+    design_result = {}
+    design_result["title_font"] = title_font
+    design_result["body_font"] = body_font
+    design_result["color"] = color_result
+    return json.dumps(design_result)
+    # return "title font, body font와 rgb color list[126, 51, 203] * 3"
 
 
 """
