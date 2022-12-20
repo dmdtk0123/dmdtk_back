@@ -21,10 +21,10 @@ def match_text2image(kobert_result_dict):
     image_key = ["close_shot", "farm_landscape", "sweetness", "size_comparison", "box"]
     text_key = ["taste", "culture", "sweetness"]
     for key in similarity_result.keys():
-        matching_result["image"][image_key[key]] = similarity_result[key]
+        matching_result["image"][image_key[key - 1]] = similarity_result[key]
 
     for key in kobert_result_dict.keys():
-        matching_result["text"][text_key[key]] = kobert_result_dict[key]
+        matching_result["text"][text_key[key - 1]] = kobert_result_dict[key]
 
     # matching_result = {"image": {"close_shot": , "farm_landscape"}, "text": {"taste": , }}
     return matching_result
