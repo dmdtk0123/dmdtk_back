@@ -8,6 +8,7 @@ def extract_font(adjective):
     quadrant3 = ["돋보이는", "개성적인", "실용적인", "모던한"]
     # 4사분면:
     quadrant4 = ["고급스러운", "세련된", "클래식한", "차분한"]
+    quadrnt = 0
 
     if adjective in quadrant1:
         quadrant = 1
