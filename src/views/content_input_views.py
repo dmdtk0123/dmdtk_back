@@ -90,6 +90,7 @@ def recommended_design():
     design_result["body_font"] = body_font
     design_result["color"] = color_result
     design_result["adj"] = adjective
+    design_result["quadrant"] = quadrant
     return json.dumps(design_result)
     # return "title font, body font와 rgb color list[126, 51, 203] * 3"
 
