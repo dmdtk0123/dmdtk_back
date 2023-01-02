@@ -79,7 +79,6 @@ def get_caption_pred():
     file_list = os.listdir("Demo/data")
     print("file_list : ", file_list)
     image_paths = ["Demo/data/" + filename for filename in file_list]
-    print("image_paths : ", image_paths)
 
     input_images = []
     for path in image_paths:

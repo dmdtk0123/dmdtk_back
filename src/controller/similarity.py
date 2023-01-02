@@ -113,10 +113,6 @@ def get_similarity(pred_caption_list):  # [[3033.jpg, 'apple is...'], [  ], ... 
             result_df.drop(index=idx, errors="ignore", inplace=True)
         # 우선순위가 높은 3,4,2,5,1 순으로 3개의 이미지를 뽑은 뒤, df에서 그 행을 인덱스를 이용해서 제거한다.
 
-    print("!!!!!!!!!!!!!!!!!!!!!result_dict!!!!!!!!!!!!!!!!!")
+    print("<이미지 유형별 분류 결과> ")
     print(result_dict)
-    print("이 아래는 result_dict 타입!!!!!!!!!!!")
-    print(type(result_dict))
-    print("이 아래는 result_dict[1]!!!!!!!!!!!")
-    print(result_dict[1])
     return result_dict

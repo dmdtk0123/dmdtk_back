@@ -62,22 +62,17 @@ def gather(rgb_ndarray):
 
 # 이미지와 컬러 히스토그램 보여줌.
 def image_color_cluster(image_path, k=4):
-    print("2")
     image = cv2.imread(image_path)
     # image의 shape을 찍어보면, height, width, channel 순으로 나옴
     # channel은 RGB를 말함
-    print("3")
 
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    print("4")
 
     # plt.imshow(image)
-    print("5")
 
     # cv에서는 RGB가 아닌 BGR 순으로 나오기 때문에 순서를 RGB로 전환
     image = image.reshape((image.shape[0] * image.shape[1], 3))
     # shape의 0,1번째 즉, height와 width를 통합시킴
-    print("6")
 
     clt = KMeans(n_clusters=k)  # 평균 알고리즘 KMeans
     clt.fit(image)
@@ -87,7 +82,6 @@ def image_color_cluster(image_path, k=4):
     # clt.cluster_centers_는 RGB값이 저장된 numpy.ndarray이다.
     # k=4인 경우 (4,3) 모양임.
     gather(np.int64(np.round(clt.cluster_centers_)))
-    print("8")
 
 
 def quadranted_choice(color_selected, adjective_quadrant):
@@ -171,8 +165,6 @@ def extract_colors(image_name_list, which_quadrant):
 
     # hsv값 들어있는 2차원 배열과 형용사에 해당하는 사분면 값 넣어줌.
     hsv_selected_list = color_recommend(hsv_value_arr1, which_quadrant)  # n사분면
-    print("!이거 확인해야함")
-    print(hsv_selected_list)
 
     # def hsv2rgb(h,s,v):
     #     return tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))

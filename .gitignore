@@ -2,3 +2,4 @@
 src/py37
 *.pyc
 *.pth
+*.jpg
